@@ -1,9 +1,9 @@
 A Laravel + Inertia Vue powered project. After cloning, setup with:
  - `composer install`
  - `npm install`
- - `npm run dev`
  - `php artisan migrate --seed`
  - `php artisan serve`
+ - `npm run dev`
 
 Seed user accounts:
   - (System Admin) system_admin@example.com | password
