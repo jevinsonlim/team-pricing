@@ -10,6 +10,7 @@ const filters = ref();
 const loading = ref(false);
 const page = usePage();
 const selectedParts = ref([]);
+const dt = ref();
 
 const initFilters = () => {
     filters.value = {
@@ -141,6 +142,10 @@ const batchRemove = (event) => {
         )
     }
 }
+
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
 </script>
 
 <template>
@@ -160,7 +165,7 @@ const batchRemove = (event) => {
                     <div class="p-6 text-gray-900">
                         <DataTable v-model:selection="selectedParts" v-model:filters="filters" :value="parts" paginator
                             showGridlines :rows="10" dataKey="id" filterDisplay="menu" :loading="loading"
-                            :globalFilterFields="['part_type', 'manufacturer', 'model_number']">
+                            :globalFilterFields="['part_type', 'manufacturer', 'model_number']" ref="dt">
                             <template #header>
                                 <div class="flex justify-between">
                                     <div>
@@ -174,12 +179,19 @@ const batchRemove = (event) => {
                                             label="Remove" outlined severity="danger" @click="batchRemove($event)" />
                                     </div>
 
-                                    <IconField>
-                                        <InputIcon>
-                                            <i class="pi pi-search" />
-                                        </InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
-                                    </IconField>
+                                    <div>
+                                        <div class="text-end pb-4">
+                                            <Button icon="pi pi-external-link" label="Export"
+                                                @click="exportCSV($event)" />
+                                        </div>
+                                        <IconField>
+                                            <InputIcon>
+                                                <i class="pi pi-search" />
+                                            </InputIcon>
+                                            <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
+                                        </IconField>
+                                    </div>
+
                                 </div>
                             </template>
                             <template #empty> No parts found. </template>
