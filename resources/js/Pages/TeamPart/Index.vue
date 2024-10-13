@@ -39,12 +39,12 @@ const exportCSV = () => {
 
 <template>
 
-    <Head title="Parts" />
+    <Head title="Team Parts" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Parts
+                Team Parts
             </h2>
         </template>
 
