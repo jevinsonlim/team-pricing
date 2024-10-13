@@ -6,9 +6,9 @@ A Laravel + Inertia Vue powered project. After cloning, setup with:
  - `php artisan serve`
 
 Seed user accounts:
-  - system_admin@example.com | password
-  - team_admin1@example.com | password
-  - team_member1@example.com | password
+  - (System Admin) system_admin@example.com | password
+  - (Team Admin) team_admin1@example.com | password
+  - (Team Member) team_member1@example.com | password
 
 **ERD**
 
