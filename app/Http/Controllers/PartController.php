@@ -36,6 +36,7 @@ class PartController extends Controller
                     $join->on('parts.id', '=', 'team_parts.part_id')
                         ->where('team_parts.team_id', '=', $sessionTeamId);
                 })
+                ->where('part.is_active', true)
                 ->get();
         }
 
