@@ -57,7 +57,7 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
 
                                 <NavLink v-if="$page.props.auth.can.view_any_team_part_upload"
-                                    :href="route('team_part_upload.index')" :active="route().current('team_team_part_upload.index')">
+                                    :href="route('team_part_upload.index')" :active="route().current('team_part_upload.index')">
                                     Team Part Uploads
                                 </NavLink>
 

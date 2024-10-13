@@ -64,7 +64,7 @@ class ProcessTeamPartUpload implements ShouldQueue
                     ->first();
 
                 if (!$teamPartToUpdate) {
-                    $manualValidationErrors[] = "Manufacturer & Model Number pair does not exist on team parts.";
+                    $manualValidationErrors[] = "Manufacturer & Model Number pair is not associated to the team.";
                 }
 
                 if ($teamPartToUpdate && !$teamPartToUpdate->part->is_active) {

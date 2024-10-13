@@ -34,7 +34,7 @@ class PartUpload extends Model
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
-                if ($attributes['process_ended_at'] && !$attributes['error_message']) return true;
+                if ($attributes['process_ended_at'] && !$attributes['remarks_file']) return true;
 
                 return false;
             },
