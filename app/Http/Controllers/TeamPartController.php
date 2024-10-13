@@ -22,4 +22,13 @@ class TeamPartController extends Controller
             'part_id' => $request->get('part_id')
         ]);
     }
+
+    public function destroy(TeamPart $teamPart, Request $request)
+    {
+        if (!$request->user()->can('destroy', $teamPart)) {
+            abort(403);
+        }
+
+        $teamPart->delete();
+    }
 }

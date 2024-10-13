@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { useToast } from "primevue/usetoast";
 
 defineProps({ parts: Array });
 
@@ -10,6 +11,7 @@ const filters = ref();
 const loading = ref(false);
 const page = usePage();
 const selectedParts = ref();
+const toast = useToast();
 
 const initFilters = () => {
     filters.value = {
@@ -45,13 +47,32 @@ const addTeamPart = function (part) {
             },
             onError: (errors) => {
                 console.log(errors);
-            }
+            },
+            preserveScroll: true,
         }
     )
 }
 
 const removeTeamPart = function (part) {
-    part.is_associated = !part.is_associated;
+    if (confirm('Are you sure you want to proceed? This will also delete the price set for the team part.')) {
+        router.delete(
+            route(
+                'team_part.destroy',
+                { team_part: part.team_part_id }
+            ),
+            {
+                onSuccess: (page) => {
+                    part.is_associated = !part.is_associated;
+
+                    alert('Part was removed from the team parts.');
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+                preserveScroll: true,
+            }
+        )
+    }
 }
 </script>
 
@@ -149,7 +170,7 @@ const removeTeamPart = function (part) {
                                         binary inputId="is-associated-filter" />
                                 </template>
                             </Column>
-                            <Column header="Action">
+                            <Column header="Action" v-if="$page.props.auth.can.create_team_part">
                                 <template #body="{ data }">
                                     <Button @click="removeTeamPart(data)" v-if="data.is_associated" icon="pi pi-times"
                                         title="Remove from team parts" severity="danger"></Button>
@@ -157,6 +178,7 @@ const removeTeamPart = function (part) {
                                         title="Add to team parts" severity="success"></Button>
                                 </template>
                             </Column>
+
                         </DataTable>
                     </div>
                 </div>

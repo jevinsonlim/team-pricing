@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/part_uploads/store', [PartUploadController::class, 'store'])->name('part_upload.store');
 
     Route::post('/team_parts/store', [TeamPartController::class, 'store'])->name('team_part.store');
-    Route::post('/team_parts/{team_part}', [TeamPartController::class, 'destroy'])->name('team_part.destroy');
+    Route::delete('/team_parts/{team_part}', [TeamPartController::class, 'destroy'])->name('team_part.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -29,7 +29,8 @@ class PartController extends Controller
                                 THEN false
                             ELSE
                                 true
-                        END as is_associated'
+                        END as is_associated,
+                        team_parts.id as team_part_id',
                 ))
                 ->leftjoin('team_parts', function (JoinClause $join) use ($sessionTeamId) {
                     $join->on('parts.id', '=', 'team_parts.part_id')
