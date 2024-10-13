@@ -1,6 +1,8 @@
 A Laravel + Inertia Vue powered project. After cloning, setup with:
  - `composer install`
  - `npm install`
+ - `cp .env.example .env`
+ - `php artisan key:generate`
  - `php artisan migrate --seed`
  - `php artisan serve`
  - `npm run dev`
