@@ -146,6 +146,15 @@ const batchRemove = (event) => {
 const exportCSV = () => {
     dt.value.exportCSV();
 };
+
+const exportFunction = ({ data, field }) => {
+    switch (field) {
+        case 'is_associated':
+            return data ? 'Y' : 'N';
+        default:
+            return String(data);
+    }
+}
 </script>
 
 <template>
@@ -165,7 +174,8 @@ const exportCSV = () => {
                     <div class="p-6 text-gray-900">
                         <DataTable v-model:selection="selectedParts" v-model:filters="filters" :value="parts" paginator
                             showGridlines :rows="10" dataKey="id" filterDisplay="menu" :loading="loading"
-                            :globalFilterFields="['part_type', 'manufacturer', 'model_number']" ref="dt">
+                            :globalFilterFields="['part_type', 'manufacturer', 'model_number']" ref="dt"
+                            :export-function="exportFunction">
                             <template #header>
                                 <div class="flex justify-between">
                                     <div>
@@ -247,7 +257,7 @@ const exportCSV = () => {
                             </Column>
                             <Column v-if="$page.props.auth.can.create_team_part" field="is_associated"
                                 header="Added to team?" dataType="boolean" bodyClass="text-center"
-                                style="min-width: 8rem">
+                                style="min-width: 8rem" export-header="Active">
                                 <template #body="{ data }">
                                     <i class="pi"
                                         :class="{ 'pi-check-circle text-green-500 ': data.is_associated, 'pi-times-circle text-red-500': !data.is_associated }"></i>
@@ -266,7 +276,6 @@ const exportCSV = () => {
                                         title="Add to team parts" severity="success"></Button>
                                 </template>
                             </Column>
-
                         </DataTable>
                     </div>
                 </div>
