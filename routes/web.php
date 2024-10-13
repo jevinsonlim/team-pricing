@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/team_parts', [TeamPartController::class, 'index'])->name('team_part.index')->can('viewAny', TeamPart::class);
     Route::post('/team_parts/store', [TeamPartController::class, 'store'])->name('team_part.store')->can('create', TeamPart::class);
     Route::post('/team_parts/store_batch', [TeamPartController::class, 'storeBatch'])->name('team_part.store_batch')->can('create', TeamPart::class);
-    Route::delete('/team_parts/{team_part}', [TeamPartController::class, 'destroy'])->name('team_part.destroy')->can('destroy', TeamPart::class);
+    Route::delete('/team_parts/{team_part}', [TeamPartController::class, 'destroy'])->name('team_part.destroy');
     Route::post('/team_parts/destroy_batch', [TeamPartController::class, 'destroyBatch'])->name('team_part.destroy_batch')->can('destroyBatch', TeamPart::class);
 
     Route::get('/team_part_uploads', [TeamPartUploadController::class, 'index'])->name('team_part_upload.index')->can('viewAny', TeamPartUpload::class);
