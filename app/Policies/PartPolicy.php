@@ -26,8 +26,8 @@ class PartPolicy
         return $user->systemAdminship()->exists();
     }
 
-    public function associateToTeam(User $user, Part $part): bool
+    public function downloadAny(User $user): bool
     {
-        return $user->teamAdminships()->exists();
+        return $user->systemAdminship()->exists();
     }
 }

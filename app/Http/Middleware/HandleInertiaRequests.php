@@ -56,6 +56,7 @@ class HandleInertiaRequests extends Middleware
                 'can' => [
                     'view_any_team' => $user->can('viewAny', Team::class),
                     'view_any_part' => $user->can('viewAny', Part::class),
+                    'download_any_part' => $user->can('downloadAny', Part::class),
                     
                     'view_any_part_upload' => $user->can('viewAny', PartUpload::class),
                     'create_part_upload' => $user->can('create', PartUpload::class),
@@ -64,7 +65,7 @@ class HandleInertiaRequests extends Middleware
                     'create_team_part' => $user->can('create', TeamPart::class),
                     'edit_team_part' => $user->can('edit', TeamPart::class),
                     'upload_team_part' => $user->can('create', TeamPart::class),
-                    'download_team_part' => $user->can('viewAny', TeamPart::class),
+                    'download_any_team_part' => $user->can('viewAny', TeamPart::class)
                 ]
             ],
             'flash' => [

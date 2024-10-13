@@ -30,7 +30,7 @@ const initFilters = () => {
 initFilters();
 
 const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'PHP' });
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 };
 const clearFilter = () => {
     initFilters();
@@ -149,7 +149,7 @@ const exportCSV = () => {
 
 const exportFunction = ({ data, field }) => {
     switch (field) {
-        case 'is_associated':
+        case 'is_active':
             return data ? 'Y' : 'N';
         default:
             return String(data);
@@ -190,9 +190,9 @@ const exportFunction = ({ data, field }) => {
                                     </div>
 
                                     <div>
-                                        <div class="text-end pb-4">
+                                        <div class="text-end pb-4" v-if="$page.props.auth.can.download_any_part">
                                             <Button icon="pi pi-external-link" label="Export"
-                                                @click="exportCSV($event)" />
+                                                @click="exportCSV($event)"/>
                                         </div>
                                         <IconField>
                                             <InputIcon>
@@ -208,7 +208,7 @@ const exportFunction = ({ data, field }) => {
                             <template #loading> Loading parts data. Please wait. </template>
                             <Column v-if="$page.props.auth.can.create_team_part" selectionMode="multiple"
                                 headerStyle="width: 3rem"></Column>
-                            <Column field="part_type" header="Part type" style="min-width: 12rem">
+                            <Column field="part_type" header="Part type" style="min-width: 12rem" export-header="Part Type">
                                 <template #body="{ data }">
                                     {{ data.part_type }}
                                 </template>
@@ -225,7 +225,7 @@ const exportFunction = ({ data, field }) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column field="model_number" header="Model number" style="min-width: 12rem">
+                            <Column field="model_number" header="Model number" style="min-width: 12rem" export-header="Model Number">
                                 <template #body="{ data }">
                                     {{ data.model_number }}
                                 </template>
@@ -233,8 +233,8 @@ const exportFunction = ({ data, field }) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column header="List price" filterField="list_price" dataType="numeric"
-                                style="min-width: 10rem">
+                            <Column header="List price" filterField="list_price" dataType="numeric" 
+                                style="min-width: 10rem" export-header="List Price">
                                 <template #body="{ data }">
                                     {{ formatCurrency(data.list_price) }}
                                 </template>
@@ -244,8 +244,8 @@ const exportFunction = ({ data, field }) => {
                                 </template>
                             </Column>
                             <Column field="is_active" header="Is active?" dataType="boolean" bodyClass="text-center"
-                                style="min-width: 8rem">
-                                <template #body="{ data }">
+                                style="min-width: 8rem" export-header="Active">
+                                <template #body="{ data }" >
                                     <i class="pi"
                                         :class="{ 'pi-check-circle text-green-500 ': data.is_active, 'pi-times-circle text-red-500': !data.is_active }"></i>
                                 </template>
@@ -257,7 +257,7 @@ const exportFunction = ({ data, field }) => {
                             </Column>
                             <Column v-if="$page.props.auth.can.create_team_part" field="is_associated"
                                 header="Added to team?" dataType="boolean" bodyClass="text-center"
-                                style="min-width: 8rem" export-header="Active">
+                                style="min-width: 8rem">
                                 <template #body="{ data }">
                                     <i class="pi"
                                         :class="{ 'pi-check-circle text-green-500 ': data.is_associated, 'pi-times-circle text-red-500': !data.is_associated }"></i>
