@@ -234,7 +234,7 @@ const exportFunction = ({ data, field }) => {
                                 </template>
                             </Column>
                             <Column header="List price" filterField="list_price" dataType="numeric" 
-                                style="min-width: 10rem" export-header="List Price">
+                                style="min-width: 10rem" export-header="List Price" field="list_price">
                                 <template #body="{ data }">
                                     {{ formatCurrency(data.list_price) }}
                                 </template>

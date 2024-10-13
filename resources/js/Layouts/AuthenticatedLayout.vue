@@ -50,6 +50,21 @@ const showingNavigationDropdown = ref(false);
                                     :href="route('part_upload.create')" :active="route().current('part_upload.create')">
                                     Create Part Uploads
                                 </NavLink>
+
+                                <NavLink v-if="$page.props.auth.can.view_any_team_part" :href="route('team_part.index')"
+                                    :active="route().current('team_part.index')">
+                                    Team Parts
+                                </NavLink>
+
+                                <NavLink v-if="$page.props.auth.can.view_any_team_part_upload"
+                                    :href="route('team_part_upload.index')" :active="route().current('team_team_part_upload.index')">
+                                    Team Part Uploads
+                                </NavLink>
+
+                                <NavLink v-if="$page.props.auth.can.create_team_part_upload"
+                                    :href="route('team_part_upload.create')" :active="route().current('team_part_upload.create')">
+                                    Create Team Part Uploads
+                                </NavLink>
                             </div>
                         </div>
 
@@ -138,6 +153,10 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
+                            <ResponsiveNavLink v-for="team in $page.props.auth.user.teams" :href="route('set_team', {'team' : team.id})">
+                                Set team: {{ team.name }}
+                            </ResponsiveNavLink>
+                            <hr>
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Profile
                             </ResponsiveNavLink>

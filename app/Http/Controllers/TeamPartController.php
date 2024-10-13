@@ -7,9 +7,28 @@ use App\Http\Requests\StoreBatchTeamPartRequest;
 use App\Http\Requests\StoreTeamPartRequest;
 use App\Models\TeamPart;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TeamPartController extends Controller
 {
+    public function index(Request $request) : Response 
+    {
+        $sessionTeamId = $request->session()->get('session_team')->id;
+
+        return Inertia::render(
+            'TeamPart/Index',
+            [
+                'teamParts' => TeamPart::query()
+                    ->with(['team', 'part'])
+                    ->whereRelation('part', 'is_active', true)
+                    ->where('team_id', $sessionTeamId)
+                    ->get()
+                    ->toArray()
+            ]
+        );
+    }
+
     public function store(StoreTeamPartRequest $request)
     {
         $isTeamPartExisting = TeamPart::query()

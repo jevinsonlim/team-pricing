@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
-class PartUpload extends Model
+class TeamPartUpload extends Model
 {
     use HasFactory;
 

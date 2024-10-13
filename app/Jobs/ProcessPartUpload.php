@@ -96,7 +96,7 @@ class ProcessPartUpload implements ShouldQueue
                 $this->partUpload->error_message = "{$withErrorsCount} record(s) were not uploaded.";
             }
         } catch (\Throwable $th) {
-            Log::error($th->getMessage);
+            Log::error($th->getMessage());
             $this->partUpload->error_message = 'A system error has occured';
         } finally {
             $this->partUpload->process_ended_at = now();

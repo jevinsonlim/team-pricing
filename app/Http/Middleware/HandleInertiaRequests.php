@@ -6,6 +6,7 @@ use App\Models\Part;
 use App\Models\PartUpload;
 use App\Models\Team;
 use App\Models\TeamPart;
+use App\Models\TeamPartUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
@@ -65,7 +66,10 @@ class HandleInertiaRequests extends Middleware
                     'create_team_part' => $user->can('create', TeamPart::class),
                     'edit_team_part' => $user->can('edit', TeamPart::class),
                     'upload_team_part' => $user->can('create', TeamPart::class),
-                    'download_any_team_part' => $user->can('viewAny', TeamPart::class)
+                    'download_any_team_part' => $user->can('viewAny', TeamPart::class),
+
+                    'view_any_team_part_upload' => $user->can('viewAny', TeamPartUpload::class),
+                    'create_team_part_upload' => $user->can('create', TeamPartUpload::class),
                 ]
             ],
             'flash' => [
