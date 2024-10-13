@@ -5,8 +5,11 @@ namespace App\Http\Requests;
 use App\Models\TeamPart;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTeamPartRequest extends FormRequest
+class StoreBatchTeamPartRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
         return $this->user()->can('create', TeamPart::class);
@@ -20,7 +23,8 @@ class StoreTeamPartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'part_id' => 'exists:parts,id'
+            'part_ids' => 'required|array',
+            'part_ids.*' => 'exists:parts,id'
         ];
     }
 }

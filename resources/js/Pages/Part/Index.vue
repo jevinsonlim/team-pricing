@@ -1,17 +1,15 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { useToast } from "primevue/usetoast";
 
 defineProps({ parts: Array });
 
 const filters = ref();
 const loading = ref(false);
 const page = usePage();
-const selectedParts = ref();
-const toast = useToast();
+const selectedParts = ref([]);
 
 const initFilters = () => {
     filters.value = {
@@ -54,7 +52,7 @@ const addTeamPart = function (part) {
 }
 
 const removeTeamPart = function (part) {
-    if (confirm('Are you sure you want to proceed? This will also delete the price set for the team part.')) {
+    if (confirm('Are you sure you want to proceed?\nThis will also delete the price set for the team part.')) {
         router.delete(
             route(
                 'team_part.destroy',
@@ -64,7 +62,76 @@ const removeTeamPart = function (part) {
                 onSuccess: (page) => {
                     part.is_associated = !part.is_associated;
 
-                    alert('Part was removed from the team parts.');
+                    alert('Part was removed from the team.');
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+                preserveScroll: true,
+            }
+        )
+    }
+}
+
+const isBatchAddEnabled = computed(function () {
+    if (selectedParts.value.length === 0) return false;
+
+    return selectedParts.value.some(part => !part.is_associated);
+})
+
+const isBatchRemoveEnabled = computed(function () {
+    if (selectedParts.value.length === 0) return false;
+
+    return selectedParts.value.some(part => part.is_associated);
+})
+
+const batchAdd = (event) => {
+    const partIds = selectedParts.value
+        .filter(part => !part.is_associated)
+        .map(part => part.id);
+
+    router.post(
+        route('team_part.store_batch'),
+        { part_ids: partIds },
+        {
+            onSuccess: (page) => {
+                selectedParts.value
+                    .filter(part => partIds.includes(part.id))
+                    .forEach(part => part.is_associated = !part.is_associated)
+
+                selectedParts.value = [];
+
+                alert('Parts added.')
+            },
+            onError: (errors) => {
+                console.log(errors);
+            },
+            preserveScroll: true,
+        }
+    )
+}
+
+const batchRemove = (event) => {
+    if (confirm('Are you sure you want to proceed?\nThis will also delete the price set for the team parts.')) {
+        const teamPartIds = selectedParts.value
+            .filter(part => part.is_associated)
+            .map(part => part.team_part_id);
+
+        router.post(
+            route('team_part.destroy_batch'),
+            { team_part_ids: teamPartIds },
+            {
+                onSuccess: (page) => {
+                    selectedParts.value
+                        .filter(part => teamPartIds.includes(part.id))
+                        .forEach((part) => {
+                            part.is_associated = !part.is_associated;
+                            part.team_part_id = null;
+                        })
+
+                    selectedParts.value = [];
+
+                    alert('Parts were removed from the team.')
                 },
                 onError: (errors) => {
                     console.log(errors);
@@ -96,8 +163,17 @@ const removeTeamPart = function (part) {
                             :globalFilterFields="['part_type', 'manufacturer', 'model_number']">
                             <template #header>
                                 <div class="flex justify-between">
-                                    <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined
-                                        @click="clearFilter()" />
+                                    <div>
+                                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined
+                                            @click="clearFilter()" class="mr-1" />
+                                        <Button v-if="$page.props.auth.can.create_team_part"
+                                            :disabled="!isBatchAddEnabled" type="button" icon="pi pi-plus" label="Add"
+                                            outlined severity="primary" @click="batchAdd($event)" class="mr-1" />
+                                        <Button v-if="$page.props.auth.can.create_team_part"
+                                            :disabled="!isBatchRemoveEnabled" type="button" icon="pi pi-times"
+                                            label="Remove" outlined severity="danger" @click="batchRemove($event)" />
+                                    </div>
+
                                     <IconField>
                                         <InputIcon>
                                             <i class="pi pi-search" />

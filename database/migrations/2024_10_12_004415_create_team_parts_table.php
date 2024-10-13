@@ -19,6 +19,8 @@ return new class extends Migration
             $table->decimal('static_price')->nullable();
             $table->decimal('team_price')->nullable();
             $table->timestamps();
+
+            $table->unique(['team_id', 'part_id']);
         });
     }
 

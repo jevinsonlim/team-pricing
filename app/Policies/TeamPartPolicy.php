@@ -53,4 +53,9 @@ class TeamPartPolicy
                 ->where('teams.id', $teamPart->team_id)
                 ->exists();
     }
+
+    public function destroyBatch(User $user): bool
+    {
+        return $user->teamAdminships()->exists();
+    }
 }

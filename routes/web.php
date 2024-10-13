@@ -37,7 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/part_uploads/store', [PartUploadController::class, 'store'])->name('part_upload.store');
 
     Route::post('/team_parts/store', [TeamPartController::class, 'store'])->name('team_part.store');
+    Route::post('/team_parts/store_batch', [TeamPartController::class, 'storeBatch'])->name('team_part.store_batch');
     Route::delete('/team_parts/{team_part}', [TeamPartController::class, 'destroy'])->name('team_part.destroy');
+    Route::post('/team_parts/destroy_batch', [TeamPartController::class, 'destroyBatch'])->name('team_part.destroy_batch');
 });
 
 require __DIR__.'/auth.php';
