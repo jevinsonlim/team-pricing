@@ -69,7 +69,7 @@ class PartSchema extends Schema
      */
     public function pagination(): ?Paginator
     {
-        return PagePagination::make()->withDefaultPerPage(2);
+        return PagePagination::make()->withDefaultPerPage(10);
     }
 
     public function indexQuery(?Request $request, Builder $query): Builder

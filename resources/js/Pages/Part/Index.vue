@@ -12,23 +12,20 @@ const page = usePage();
 const selectedParts = ref([]);
 const dt = ref();
 const store = jsonapiStore();
-const first = ref(0);
-const rows = ref(0);
 const totalRecords = ref(0);
+const lazyParams = ref({});
+const rows = ref(5);
 
 const initFilters = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        part_type: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        partType: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         manufacturer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        model_number: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        list_price: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-        is_active: { value: null, matchMode: FilterMatchMode.EQUALS }
+        modelNumber: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        listPrice: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+        isActive: { value: null, matchMode: FilterMatchMode.EQUALS },
+        isAssociated: { value: null, matchMode: FilterMatchMode.EQUALS }
     };
-
-    if (page.props.auth.can.create_team_part) {
-        filters.value.is_associated = { value: null, matchMode: FilterMatchMode.EQUALS }
-    }
 };
 
 initFilters();
@@ -55,13 +52,11 @@ const addTeamPart = function (part) {
         },
     }
 
-    store.post(
-        newTeamPart,
-        route('v1.team-parts.store')
-    ).then(data => {
-        part.isAssociated = !part.isAssociated;
-        part.teamPartId = data._jv.id;
-    }).catch(error => console.log(error));
+    store.post(newTeamPart)
+        .then(data => {
+            part.isAssociated = !part.isAssociated;
+            part.teamPartId = data._jv.id;
+        }).catch(error => console.log(error));
 }
 
 const removeTeamPart = function (part) {
@@ -158,11 +153,8 @@ const exportFunction = ({ data, field }) => {
     }
 }
 
-const lazyParams = ref({});
-
 onMounted(() => {
     lazyParams.value = {
-        first: dt.value.first,
         rows: dt.value.rows,
         sortField: null,
         sortOrder: null,
@@ -175,25 +167,29 @@ onMounted(() => {
 const loadLazyData = (event) => {
     loading.value = true;
 
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    const searchParams = new URLSearchParams();
+    searchParams.append('page[number]', event?.page + 1 || 1);
+    searchParams.append('page[size]', lazyParams.value.rows || rows.value);
 
-    console.log(lazyParams.value);
+    console.log(lazyParams.value.filters);
 
-    store.get('parts').then(data => {
-        console.log(data);
+    store.search('parts?' + searchParams.toString())
+        .then(data => {
+            console.log(data);
 
-        let parsedParts = [];
+            let parsedParts = [];
 
-        for (const [key, value] of Object.entries(data)) {
-            parsedParts.push({ id: key, ...value })
-        }
+            for (const [key, value] of Object.entries(data)) {
+                if (key === '_jv') continue;
 
-        parts.value = parsedParts;
-        totalRecords.value = data._jv.json.meta.page.total;
-        rows.value = data._jv.json.data.length;
+                parsedParts.push({ id: key, ...value })
+            }
 
-        loading.value = false;
-    });
+            parts.value = parsedParts;
+            totalRecords.value = data._jv.json.meta.page.total;
+
+            loading.value = false;
+        });
 };
 
 const onPage = (event) => {
@@ -205,7 +201,7 @@ const onSort = (event) => {
     loadLazyData(event);
 };
 const onFilter = (event) => {
-    lazyParams.value.filters = filters.value ;
+    lazyParams.value.filters = filters.value;
     loadLazyData(event);
 };
 </script>
@@ -228,8 +224,9 @@ const onFilter = (event) => {
                         <DataTable v-model:selection="selectedParts" v-model:filters="filters" :value="parts" paginator
                             showGridlines :rows="rows" dataKey="id" filterDisplay="menu" :loading="loading"
                             :globalFilterFields="['partType', 'manufacturer', 'modelNumber']" ref="dt"
-                            :export-function="exportFunction" lazy :first="first" :totalRecords="totalRecords" 
-                            @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)">
+                            :export-function="exportFunction" lazy :totalRecords="totalRecords"
+                            @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                            :rowsPerPageOptions="[5, 10, 20, 50]">
                             <template #header>
                                 <div class="flex justify-between">
                                     <div>
@@ -261,7 +258,7 @@ const onFilter = (event) => {
                             <template #loading> Loading parts data. Please wait. </template>
                             <Column v-if="$page.props.auth.can.create_team_part" selectionMode="multiple"
                                 headerStyle="width: 3rem"></Column>
-                            <Column field="part_type" header="Part type" style="min-width: 12rem"
+                            <Column field="partType" header="Part type" style="min-width: 12rem"
                                 export-header="Part Type">
                                 <template #body="{ data }">
                                     {{ data.partType }}
@@ -279,7 +276,7 @@ const onFilter = (event) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column field="model_number" header="Model number" style="min-width: 12rem"
+                            <Column field="modelNumber" header="Model number" style="min-width: 12rem"
                                 export-header="Model Number">
                                 <template #body="{ data }">
                                     {{ data.modelNumber }}
@@ -288,10 +285,10 @@ const onFilter = (event) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column header="List price" filterField="list_price" dataType="numeric"
-                                style="min-width: 10rem" export-header="List Price" field="list_price">
+                            <Column header="List price" filterField="listPrice" dataType="numeric"
+                                style="min-width: 10rem" export-header="List Price" field="listPrice">
                                 <template #body="{ data }">
-                                    {{ formatCurrency(data.listPrice ?? 0) }}
+                                    {{ formatCurrency(data.listPrice) }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <InputNumber v-model="filterModel.value" mode="currency" currency="PHP"
