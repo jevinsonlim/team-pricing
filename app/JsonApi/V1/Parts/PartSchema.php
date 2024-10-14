@@ -41,6 +41,8 @@ class PartSchema extends Schema
             Str::make('modelNumber')->readOnly(),
             Boolean::make('isActive')->readOnly(),
             Number::make('listPrice')->sortable()->readOnly(),
+            Boolean::make('isAssociated')->sortable()->readOnly(),
+            Number::make('teamPartId')->sortable()->readOnly(),
             DateTime::make('updatedAt')->sortable()->readOnly(),
             DateTime::make('createdAt')->sortable()->readOnly(),
         ];
@@ -72,17 +74,16 @@ class PartSchema extends Schema
     {
         $sessionTeamId = $request->session()->get('session_team')->id;
 
-        return $query->select(DB::raw(
-            '
-                    parts.*, 
-                    CASE
-                        WHEN team_parts.id IS NULL
-                            THEN false
-                        ELSE
-                            true
-                    END as is_associated,
-                    team_parts.id as team_part_id',
-        ))
+        return $query->select(DB::raw('
+                parts.*, 
+                CASE
+                    WHEN team_parts.id IS NULL
+                        THEN false
+                    ELSE
+                        true
+                END as is_associated,
+                team_parts.id as team_part_id
+            '))
             ->leftjoin('team_parts', function (JoinClause $join) use ($sessionTeamId) {
                 $join->on('parts.id', '=', 'team_parts.part_id')
                     ->where('team_parts.team_id', '=', $sessionTeamId);

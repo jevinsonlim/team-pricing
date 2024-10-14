@@ -21,15 +21,7 @@ class TeamPartSchema extends Schema
      * @var string
      */
     public static string $model = TeamPart::class;
-
-    /**
-     * @inheritDoc
-     */
-    public static function type(): string
-    {
-        return 'team_parts';
-    }
-
+    
     /**
      * Get the resource fields.
      *

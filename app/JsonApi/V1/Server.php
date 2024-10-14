@@ -30,7 +30,7 @@ class Server extends BaseServer
         Auth::shouldUse('sanctum');
 
         TeamPart::creating(static function (TeamPart $teamPart): void {
-            $teamPart->team()->associate(Session::get('session_team')->id);
+            $teamPart->team()->associate(Session::get('session_team'));
         });
     }
 

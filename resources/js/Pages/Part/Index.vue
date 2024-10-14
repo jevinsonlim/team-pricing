@@ -38,19 +38,27 @@ const clearFilter = () => {
 };
 
 const addTeamPart = function (part) {
-    router.post(
-        route('v1.team_parts.store'),
-        { partId: part.id },
-        {
-            onSuccess: (page) => {
-                part.isAssociated = !part.isAssociated;
-            },
-            onError: (errors) => {
-                console.log(errors);
-            },
-            preserveScroll: true,
-        }
-    )
+    const newTeamPart = {
+        _jv: {
+            type: 'team-parts',
+            relationships: {
+                part : {
+                    data: {
+                        type: 'parts',
+                        id: part.id
+                    }
+                }
+            }
+        },
+    }
+
+    store.post(
+        newTeamPart,
+        route('v1.team-parts.store')
+    ).then(data => {
+        part.isAssociated = !part.isAssociated;
+        console.log(data)
+    }).catch(error => console.log(errror));
 }
 
 const removeTeamPart = function (part) {

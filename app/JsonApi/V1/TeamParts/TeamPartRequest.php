@@ -17,7 +17,7 @@ class TeamPartRequest extends ResourceRequest
     public function rules(): array
     {
         return [
-            'partId' => 'exists:parts,id'
+            'part' => JsonApiRule::toOne()
         ];
     }
 
