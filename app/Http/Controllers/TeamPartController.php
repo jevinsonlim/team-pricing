@@ -63,7 +63,7 @@ class TeamPartController extends Controller
     public function destroy(TeamPart $teamPart, Request $request)
     {
         if (
-            !$request->user()->can('destroy', $teamPart)
+            !$request->user()->can('delete', $teamPart)
             || $teamPart->team_id != $request->session()->get('session_team')->id
         ) {
             abort(403);
