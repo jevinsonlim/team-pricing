@@ -1,16 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { jsonapiStore } from '@/store.js'
 
-defineProps({ parts: Array });
-
+const parts = ref([]);
 const filters = ref();
-const loading = ref(false);
+const loading = ref(true);
 const page = usePage();
 const selectedParts = ref([]);
 const dt = ref();
+const store = jsonapiStore();
 
 const initFilters = () => {
     filters.value = {
@@ -38,11 +39,11 @@ const clearFilter = () => {
 
 const addTeamPart = function (part) {
     router.post(
-        route('team_part.store'),
-        { part_id: part.id },
+        route('v1.team_parts.store'),
+        { partId: part.id },
         {
             onSuccess: (page) => {
-                part.is_associated = !part.is_associated;
+                part.isAssociated = !part.isAssociated;
             },
             onError: (errors) => {
                 console.log(errors);
@@ -155,6 +156,36 @@ const exportFunction = ({ data, field }) => {
             return String(data);
     }
 }
+
+const lazyParams = ref({});
+
+onMounted(() => {
+    lazyParams.value = {
+        first: dt.value.first,
+        rows: dt.value.rows,
+        sortField: null,
+        sortOrder: null,
+        filters: filters.value
+    };
+
+    loadLazyData();
+});
+
+const loadLazyData = (event) => {
+    loading.value = true;
+
+    store.get('parts').then(data => {
+        let parsedParts = [];
+
+        for (const [key, value] of Object.entries(data)) {
+            parsedParts.push({ id: key, ...value })
+        }
+
+        parts.value = parsedParts;
+
+        loading.value = false;
+    });
+};
 </script>
 
 <template>
@@ -174,7 +205,7 @@ const exportFunction = ({ data, field }) => {
                     <div class="p-6 text-gray-900">
                         <DataTable v-model:selection="selectedParts" v-model:filters="filters" :value="parts" paginator
                             showGridlines :rows="10" dataKey="id" filterDisplay="menu" :loading="loading"
-                            :globalFilterFields="['part_type', 'manufacturer', 'model_number']" ref="dt"
+                            :globalFilterFields="['partType', 'manufacturer', 'modelNumber']" ref="dt"
                             :export-function="exportFunction">
                             <template #header>
                                 <div class="flex justify-between">
@@ -192,7 +223,7 @@ const exportFunction = ({ data, field }) => {
                                     <div>
                                         <div class="text-end pb-4" v-if="$page.props.auth.can.download_any_part">
                                             <Button icon="pi pi-external-link" label="Export"
-                                                @click="exportCSV($event)"/>
+                                                @click="exportCSV($event)" />
                                         </div>
                                         <IconField>
                                             <InputIcon>
@@ -208,9 +239,10 @@ const exportFunction = ({ data, field }) => {
                             <template #loading> Loading parts data. Please wait. </template>
                             <Column v-if="$page.props.auth.can.create_team_part" selectionMode="multiple"
                                 headerStyle="width: 3rem"></Column>
-                            <Column field="part_type" header="Part type" style="min-width: 12rem" export-header="Part Type">
+                            <Column field="partType" header="Part type" style="min-width: 12rem"
+                                export-header="Part Type">
                                 <template #body="{ data }">
-                                    {{ data.part_type }}
+                                    {{ data.partType }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <InputText v-model="filterModel.value" type="text"
@@ -225,29 +257,30 @@ const exportFunction = ({ data, field }) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column field="model_number" header="Model number" style="min-width: 12rem" export-header="Model Number">
+                            <Column field="modelNumber" header="Model number" style="min-width: 12rem"
+                                export-header="Model Number">
                                 <template #body="{ data }">
-                                    {{ data.model_number }}
+                                    {{ data.modelNumber }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column header="List price" filterField="list_price" dataType="numeric" 
-                                style="min-width: 10rem" export-header="List Price" field="list_price">
+                            <Column header="List price" filterField="listPrice" dataType="numeric"
+                                style="min-width: 10rem" export-header="List Price" field="listPrice">
                                 <template #body="{ data }">
-                                    {{ formatCurrency(data.list_price) }}
+                                    {{ formatCurrency(data.listPrice) }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <InputNumber v-model="filterModel.value" mode="currency" currency="PHP"
                                         locale="en-US" />
                                 </template>
                             </Column>
-                            <Column field="is_active" header="Is active?" dataType="boolean" bodyClass="text-center"
+                            <Column field="isActive" header="Is active?" dataType="boolean" bodyClass="text-center"
                                 style="min-width: 8rem" export-header="Active">
-                                <template #body="{ data }" >
+                                <template #body="{ data }">
                                     <i class="pi"
-                                        :class="{ 'pi-check-circle text-green-500 ': data.is_active, 'pi-times-circle text-red-500': !data.is_active }"></i>
+                                        :class="{ 'pi-check-circle text-green-500 ': data.isActive, 'pi-times-circle text-red-500': !data.isActive }"></i>
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <label for="is-active-filter" class="font-bold"> Is Active </label>
@@ -255,12 +288,12 @@ const exportFunction = ({ data, field }) => {
                                         binary inputId="is-active-filter" />
                                 </template>
                             </Column>
-                            <Column v-if="$page.props.auth.can.create_team_part" field="is_associated"
+                            <Column v-if="$page.props.auth.can.create_team_part" field="isAssociated"
                                 header="Added to team?" dataType="boolean" bodyClass="text-center"
                                 style="min-width: 8rem">
                                 <template #body="{ data }">
                                     <i class="pi"
-                                        :class="{ 'pi-check-circle text-green-500 ': data.is_associated, 'pi-times-circle text-red-500': !data.is_associated }"></i>
+                                        :class="{ 'pi-check-circle text-green-500 ': data.isAssociated, 'pi-times-circle text-red-500': !data.isAssociated }"></i>
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <label for="is-associated-filter" class="font-bold"> Is Associated </label>
@@ -270,9 +303,9 @@ const exportFunction = ({ data, field }) => {
                             </Column>
                             <Column header="Action" v-if="$page.props.auth.can.create_team_part">
                                 <template #body="{ data }">
-                                    <Button @click="removeTeamPart(data)" v-if="data.is_associated" icon="pi pi-times"
+                                    <Button @click="removeTeamPart(data)" v-if="data.isAssociated" icon="pi pi-times"
                                         title="Remove from team parts" severity="danger"></Button>
-                                    <Button @click="addTeamPart(data)" v-if="!data.is_associated" icon="pi pi-plus"
+                                    <Button @click="addTeamPart(data)" v-if="!data.isAssociated" icon="pi pi-plus"
                                         title="Add to team parts" severity="success"></Button>
                                 </template>
                             </Column>

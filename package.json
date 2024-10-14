@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "@primevue/themes": "^4.1.0",
+        "pinia-jsonapi": "^6.7.0",
         "primeicons": "^7.0.0",
         "primevue": "^4.1.0"
     }
