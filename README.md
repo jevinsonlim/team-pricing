@@ -20,12 +20,12 @@ Seed user accounts:
 ![Alt text](ERD.png)
 
 **Implemented features**
-- System admins can view teams
-- System admins may upload/download system-wide parts
-- Team admins can view system-wide parts
-- Team admins can associate parts to their team
-- Team admins can upload/download team pricing details
-- Team members can view and search team parts and part information
+- System admins can view teams (*/teams*)
+- System admins may upload/download system-wide parts (*/part_uploads* + */parts*)
+- Team admins can view system-wide parts (*/parts*)
+- Team admins can associate parts to their team (*/parts*)
+- Team admins can upload/download team pricing details (*/team_part_uploads*)
+- Team members can view and search team parts and part information (*/team_parts*)
 
 **Additional features**
 - Limited file size for uploads (1mb), for faster upload feedback and avoid memory hogging processes/jobs
