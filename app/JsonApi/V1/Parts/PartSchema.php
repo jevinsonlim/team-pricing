@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
+use LaravelJsonApi\Eloquent\Filters\Where;
 
 class PartSchema extends Schema
 {
@@ -59,6 +60,7 @@ class PartSchema extends Schema
     {
         return [
             WhereIdIn::make($this),
+            Where::make('is-active')->asBoolean()
         ];
     }
 

@@ -146,7 +146,7 @@ const exportCSV = () => {
 
 const exportFunction = ({ data, field }) => {
     switch (field) {
-        case 'is_active':
+        case 'isActive':
             return data ? 'Y' : 'N';
         default:
             return String(data);
@@ -167,9 +167,17 @@ onMounted(() => {
 const loadLazyData = (event) => {
     loading.value = true;
 
-    const searchParams = new URLSearchParams();
-    searchParams.append('page[number]', event?.page + 1 || 1);
-    searchParams.append('page[size]', lazyParams.value.rows || rows.value);
+    const paginationParams = {
+        'page[number]': event?.page + 1 || 1,
+        'page[size]': lazyParams.value.rows || rows.value
+    }
+
+    const filterParams = createFilterParams(lazyParams.value.filters);
+
+    const searchParams = new URLSearchParams({
+        ...paginationParams,
+        ...filterParams
+    });
 
     console.log(lazyParams.value.filters);
 
@@ -191,6 +199,16 @@ const loadLazyData = (event) => {
             loading.value = false;
         });
 };
+
+const createFilterParams = (filters) => {
+    let params = {};
+
+    if (filters.isActive.value !== null) {
+        params['filter[is-active]'] = filters.isActive.value;
+    }
+
+    return params;
+}
 
 const onPage = (event) => {
     lazyParams.value = event;
