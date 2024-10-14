@@ -232,14 +232,13 @@ const loadLazyData = (event) => {
                                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                                         </IconField>
                                     </div>
-
                                 </div>
                             </template>
                             <template #empty> No parts found. </template>
                             <template #loading> Loading parts data. Please wait. </template>
                             <Column v-if="$page.props.auth.can.create_team_part" selectionMode="multiple"
                                 headerStyle="width: 3rem"></Column>
-                            <Column field="partType" header="Part type" style="min-width: 12rem"
+                            <Column field="part_type" header="Part type" style="min-width: 12rem"
                                 export-header="Part Type">
                                 <template #body="{ data }">
                                     {{ data.partType }}
@@ -257,7 +256,7 @@ const loadLazyData = (event) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column field="modelNumber" header="Model number" style="min-width: 12rem"
+                            <Column field="model_number" header="Model number" style="min-width: 12rem"
                                 export-header="Model Number">
                                 <template #body="{ data }">
                                     {{ data.modelNumber }}
@@ -266,8 +265,8 @@ const loadLazyData = (event) => {
                                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                                 </template>
                             </Column>
-                            <Column header="List price" filterField="listPrice" dataType="numeric"
-                                style="min-width: 10rem" export-header="List Price" field="listPrice">
+                            <Column header="List price" filterField="list_price" dataType="numeric"
+                                style="min-width: 10rem" export-header="List Price" field="list_price">
                                 <template #body="{ data }">
                                     {{ formatCurrency(data.listPrice) }}
                                 </template>
