@@ -33,8 +33,9 @@ initFilters();
 const formatCurrency = (value) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 };
-const clearFilter = () => {
+const clearFilter = (event) => {
     initFilters();
+    onFilter(event);
 };
 
 const addTeamPart = function (part) {
@@ -252,7 +253,7 @@ const onFilter = (event) => {
                                 <div class="flex justify-between">
                                     <div>
                                         <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined
-                                            @click="clearFilter()" class="mr-1" />
+                                            @click="clearFilter($event)" class="mr-1" />
                                         <Button v-if="$page.props.auth.can.create_team_part"
                                             :disabled="!isBatchAddEnabled" type="button" icon="pi pi-plus" label="Add"
                                             outlined severity="primary" @click="batchAdd($event)" class="mr-1" />

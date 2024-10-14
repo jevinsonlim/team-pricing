@@ -78,6 +78,8 @@ class PartSchema extends Schema
 
     public function indexQuery(?Request $request, Builder $query): Builder
     {
+        if ($request->user()->systemAdminship()->exists()) return $query;
+
         $sessionTeamId = $request->session()->get('session_team')->id;
 
         return $query->select(DB::raw('
