@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 class PartSchema extends Schema
 {
 
+    protected ?array $defaultPagination = ['number' => 1];
+
     /**
      * The model the schema corresponds to.
      *
@@ -67,7 +69,7 @@ class PartSchema extends Schema
      */
     public function pagination(): ?Paginator
     {
-        return PagePagination::make();
+        return PagePagination::make()->withDefaultPerPage(2);
     }
 
     public function indexQuery(?Request $request, Builder $query): Builder

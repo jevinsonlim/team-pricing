@@ -12,6 +12,9 @@ const page = usePage();
 const selectedParts = ref([]);
 const dt = ref();
 const store = jsonapiStore();
+const first = ref(0);
+const rows = ref(0);
+const totalRecords = ref(0);
 
 const initFilters = () => {
     filters.value = {
@@ -172,7 +175,13 @@ onMounted(() => {
 const loadLazyData = (event) => {
     loading.value = true;
 
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+
+    console.log(lazyParams.value);
+
     store.get('parts').then(data => {
+        console.log(data);
+
         let parsedParts = [];
 
         for (const [key, value] of Object.entries(data)) {
@@ -180,9 +189,24 @@ const loadLazyData = (event) => {
         }
 
         parts.value = parsedParts;
+        totalRecords.value = data._jv.json.meta.page.total;
+        rows.value = data._jv.json.data.length;
 
         loading.value = false;
     });
+};
+
+const onPage = (event) => {
+    lazyParams.value = event;
+    loadLazyData(event);
+};
+const onSort = (event) => {
+    lazyParams.value = event;
+    loadLazyData(event);
+};
+const onFilter = (event) => {
+    lazyParams.value.filters = filters.value ;
+    loadLazyData(event);
 };
 </script>
 
@@ -202,9 +226,10 @@ const loadLazyData = (event) => {
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <DataTable v-model:selection="selectedParts" v-model:filters="filters" :value="parts" paginator
-                            showGridlines :rows="10" dataKey="id" filterDisplay="menu" :loading="loading"
+                            showGridlines :rows="rows" dataKey="id" filterDisplay="menu" :loading="loading"
                             :globalFilterFields="['partType', 'manufacturer', 'modelNumber']" ref="dt"
-                            :export-function="exportFunction">
+                            :export-function="exportFunction" lazy :first="first" :totalRecords="totalRecords" 
+                            @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)">
                             <template #header>
                                 <div class="flex justify-between">
                                     <div>
@@ -266,7 +291,7 @@ const loadLazyData = (event) => {
                             <Column header="List price" filterField="list_price" dataType="numeric"
                                 style="min-width: 10rem" export-header="List Price" field="list_price">
                                 <template #body="{ data }">
-                                    {{ formatCurrency(data.listPrice) }}
+                                    {{ formatCurrency(data.listPrice ?? 0) }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <InputNumber v-model="filterModel.value" mode="currency" currency="PHP"

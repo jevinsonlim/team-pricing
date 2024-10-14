@@ -6,10 +6,11 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/vnd.api+json',
     'Accept': 'application/vnd.api+json'
-  },
-  withXSRFToken: true
+  }
 })
 
-const { jsonapiStore } = createJsonapiStore(api)
+const config = { preserveJson: true }
+
+const { jsonapiStore } = createJsonapiStore(api, config)
 
 export { jsonapiStore }
