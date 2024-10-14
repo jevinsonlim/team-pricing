@@ -2,6 +2,7 @@
 
 namespace App\JsonApi\V1\Parts;
 
+use App\JsonApi\Filters\PartIsAssociated;
 use App\Models\Part;
 use LaravelJsonApi\Eloquent\Contracts\Paginator;
 use LaravelJsonApi\Eloquent\Fields\Boolean;
@@ -60,7 +61,8 @@ class PartSchema extends Schema
     {
         return [
             WhereIdIn::make($this),
-            Where::make('is-active')->asBoolean()
+            Where::make('is-active')->asBoolean(),
+            PartIsAssociated::make('is-associated')
         ];
     }
 

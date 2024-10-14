@@ -74,18 +74,18 @@ const removeTeamPart = function (part) {
 const isBatchAddEnabled = computed(function () {
     if (selectedParts.value.length === 0) return false;
 
-    return selectedParts.value.some(part => !part.is_associated);
+    return selectedParts.value.some(part => !part.isAssociated);
 })
 
 const isBatchRemoveEnabled = computed(function () {
     if (selectedParts.value.length === 0) return false;
 
-    return selectedParts.value.some(part => part.is_associated);
+    return selectedParts.value.some(part => part.isAssociated);
 })
 
 const batchAdd = (event) => {
     const partIds = selectedParts.value
-        .filter(part => !part.is_associated)
+        .filter(part => !part.isAssociated)
         .map(part => part.id);
 
     router.post(
@@ -95,7 +95,7 @@ const batchAdd = (event) => {
             onSuccess: (page) => {
                 selectedParts.value
                     .filter(part => partIds.includes(part.id))
-                    .forEach(part => part.is_associated = !part.is_associated)
+                    .forEach(part => part.isAssociated = !part.isAssociated)
 
                 selectedParts.value = [];
 
@@ -112,8 +112,8 @@ const batchAdd = (event) => {
 const batchRemove = (event) => {
     if (confirm('Are you sure you want to proceed?\nThis will also delete the price set for the team parts.')) {
         const teamPartIds = selectedParts.value
-            .filter(part => part.is_associated)
-            .map(part => part.team_part_id);
+            .filter(part => part.isAssociated)
+            .map(part => part.teamPartId);
 
         router.post(
             route('team_part.destroy_batch'),
@@ -121,10 +121,10 @@ const batchRemove = (event) => {
             {
                 onSuccess: (page) => {
                     selectedParts.value
-                        .filter(part => teamPartIds.includes(part.id))
+                        .filter(part => teamPartIds.includes(part.teamPartId))
                         .forEach((part) => {
-                            part.is_associated = !part.is_associated;
-                            part.team_part_id = null;
+                            part.isAssociated = !part.isAssociated;
+                            part.teamPartId = null;
                         })
 
                     selectedParts.value = [];
@@ -207,6 +207,10 @@ const createFilterParams = (filters) => {
         params['filter[is-active]'] = filters.isActive.value;
     }
 
+    if (filters.isAssociated.value !== null) {
+        params['filter[is-associated]'] = filters.isAssociated.value;
+    }
+
     return params;
 }
 
@@ -242,9 +246,8 @@ const onFilter = (event) => {
                         <DataTable v-model:selection="selectedParts" v-model:filters="filters" :value="parts" paginator
                             showGridlines :rows="rows" dataKey="id" filterDisplay="menu" :loading="loading"
                             :globalFilterFields="['partType', 'manufacturer', 'modelNumber']" ref="dt"
-                            :export-function="exportFunction" lazy :totalRecords="totalRecords"
-                            @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
-                            :rowsPerPageOptions="[5, 10, 20, 50]">
+                            :export-function="exportFunction" lazy :totalRecords="totalRecords" @page="onPage($event)"
+                            @sort="onSort($event)" @filter="onFilter($event)" :rowsPerPageOptions="[5, 10, 20, 50]">
                             <template #header>
                                 <div class="flex justify-between">
                                     <div>
