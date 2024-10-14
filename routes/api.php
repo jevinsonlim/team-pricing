@@ -13,5 +13,5 @@ Route::get('/user', function (Request $request) {
 JsonApiRoute::server('v1')->prefix('v1')->resources(function (ResourceRegistrar $server) {
     $server->resource('parts', JsonApiController::class)->readOnly();
     $server->resource('teams', JsonApiController::class)->readOnly();
-    $server->resource('team-parts', JsonApiController::class)->only('store');
+    $server->resource('team-parts', JsonApiController::class)->only('store', 'destroy');
 });

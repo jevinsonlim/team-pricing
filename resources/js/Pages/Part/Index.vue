@@ -42,7 +42,7 @@ const addTeamPart = function (part) {
         _jv: {
             type: 'team-parts',
             relationships: {
-                part : {
+                part: {
                     data: {
                         type: 'parts',
                         id: part.id
@@ -57,29 +57,19 @@ const addTeamPart = function (part) {
         route('v1.team-parts.store')
     ).then(data => {
         part.isAssociated = !part.isAssociated;
-        console.log(data)
-    }).catch(error => console.log(errror));
+        part.teamPartId = data._jv.id;
+    }).catch(error => console.log(error));
 }
 
 const removeTeamPart = function (part) {
     if (confirm('Are you sure you want to proceed?\nThis will also delete the price set for the team part.')) {
-        router.delete(
-            route(
-                'team_part.destroy',
-                { team_part: part.team_part_id }
-            ),
-            {
-                onSuccess: (page) => {
-                    part.is_associated = !part.is_associated;
+        store.delete('team-parts/' + part.teamPartId)
+            .then(() => {
+                part.isAssociated = !part.isAssociated;
+                part.teamPartId = null;
 
-                    alert('Part was removed from the team.');
-                },
-                onError: (errors) => {
-                    console.log(errors);
-                },
-                preserveScroll: true,
-            }
-        )
+                alert('Part was removed from the team.');
+            }).catch(error => console.log(error));
     }
 }
 
