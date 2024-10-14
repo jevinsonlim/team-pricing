@@ -25,12 +25,12 @@ Seed user accounts:
 - Team members can view and search team parts and part information
 
 **Additional features**
-- Limited file size for uploads (1mb), for faster upload feedback and avoid memory hoarding processes/jobs
+- Limited file size for uploads (1mb), for faster upload feedback and avoid memory hogging processes/jobs
 - Session's team is changable for members/team admins with multiple teams
 - Validation results for system-wide part uploads
 - Validation results for team pricing uploads
 
-**Necessary improvements**
+**Necessary improvements** (work in progress in [this branch](https://github.com/jevinsonlim/team-pricing/tree/server-side-pagination-and-filter-progress))
 - Server-side pagination for datatables
   - Basic features are functional but the app will be really slow for larger dataset
 - Batch team part association in a job
