@@ -316,7 +316,7 @@ const onFilter = (event) => {
                                     {{ formatCurrency(data.listPrice) }}
                                 </template>
                                 <template #filter="{ filterModel }">
-                                    <InputNumber v-model="filterModel.value" mode="currency" currency="PHP"
+                                    <InputNumber v-model="filterModel.value" mode="currency" currency="USD"
                                         locale="en-US" />
                                 </template>
                             </Column>

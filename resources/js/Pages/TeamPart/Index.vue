@@ -203,9 +203,9 @@ const onFilter = (event) => {
                                 </template>
                             </Column>
                             <Column header="Team Price" dataType="numeric" style="min-width: 10rem"
-                                export-header="Team Price" field="teamPrice">
+                                export-header="Team Price" field="teamPrice" currency="USD">
                                 <template #body="{ data }">
-                                    {{ data.multiplier }}
+                                    {{ formatCurrency(data.teamPrice) }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <InputNumber v-model="filterModel.value" locale="en-US" />
