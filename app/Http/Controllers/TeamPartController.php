@@ -12,21 +12,9 @@ use Inertia\Response;
 
 class TeamPartController extends Controller
 {
-    public function index(Request $request) : Response 
+    public function index() : Response 
     {
-        $sessionTeamId = $request->session()->get('session_team')->id;
-
-        return Inertia::render(
-            'TeamPart/Index',
-            [
-                'teamParts' => TeamPart::query()
-                    ->with(['team', 'part'])
-                    ->whereRelation('part', 'is_active', true)
-                    ->where('team_id', $sessionTeamId)
-                    ->get()
-                    ->toArray()
-            ]
-        );
+        return Inertia::render('TeamPart/Index');
     }
 
     public function store(StoreTeamPartRequest $request)

@@ -9,7 +9,7 @@ use LaravelJsonApi\Eloquent\Contracts\Filter;
 use LaravelJsonApi\Eloquent\Filters\Concerns\DeserializesValue;
 use LaravelJsonApi\Eloquent\Filters\Concerns\IsSingular;
 
-class PartFilters implements Filter
+class TeamPartFilter implements Filter
 {
     use DeserializesValue;
     use IsSingular;
@@ -29,7 +29,7 @@ class PartFilters implements Filter
      *
      * @param string $name
      * @param string|null $column
-     * @return PartFilters
+     * @return TeamPartFilter
      */
     public static function make(string $name, string $column = null): self
     {
@@ -37,7 +37,7 @@ class PartFilters implements Filter
     }
 
     /**
-     * PartFilters constructor.
+     * TeamPartFilter constructor.
      *
      * @param string $name
      * @param string|null $column
@@ -67,32 +67,32 @@ class PartFilters implements Filter
      */
     public function apply($query, $value)
     {
-        $partFilters = json_decode(urldecode($value), true);
+        $teamPartFilters = json_decode(urldecode($value), true);
 
-        Log::debug($partFilters);
+        Log::debug($teamPartFilters);
 
         $filterableFields = [
             [
                 'name' => 'modelNumber',
-                'db_column' => 'model_number',
+                'db_column' => 'parts.model_number',
                 'is_numeric' => false,
                 'is_global_searchable' => true,
             ],
             [
                 'name' => 'partType',
-                'db_column' => 'part_type',
+                'db_column' => 'parts.part_type',
                 'is_numeric' => false,
                 'is_global_searchable' => true,
             ],
             [
                 'name' => 'manufacturer',
-                'db_column' => 'manufacturer',
+                'db_column' => 'parts.manufacturer',
                 'is_numeric' => false,
                 'is_global_searchable' => true,
             ],
             [
                 'name' => 'listPrice',
-                'db_column' => 'list_price',
+                'db_column' => 'parts.list_price',
                 'is_numeric' => true,
                 'is_global_searchable' => false
             ]
@@ -104,12 +104,12 @@ class PartFilters implements Filter
         );
 
         if (
-            isset($partFilters['global'])
-            && $partFilters['global']['value']
-            && trim($partFilters['global']['value']) !== ''
+            isset($teamPartFilters['global'])
+            && $teamPartFilters['global']['value']
+            && trim($teamPartFilters['global']['value']) !== ''
             && $globalSearchableFields
         ) {
-            $filterValue = trim($partFilters['global']['value']);
+            $filterValue = trim($teamPartFilters['global']['value']);
 
             $query->where(function (Builder $query) use ($filterValue, $globalSearchableFields) {
                 foreach ($globalSearchableFields as $field) {
@@ -128,14 +128,14 @@ class PartFilters implements Filter
         foreach ($filterableFields as $field) {
             $fieldName = $field['name'];
 
-            if (!isset($partFilters[$fieldName])) continue;
+            if (!isset($teamPartFilters[$fieldName])) continue;
 
-            if (!isset($partFilters[$fieldName]['constraints'])) continue;
+            if (!isset($teamPartFilters[$fieldName]['constraints'])) continue;
 
-            if (!isset($partFilters[$fieldName]['operator'])) continue;
+            if (!isset($teamPartFilters[$fieldName]['operator'])) continue;
 
             $nonEmptyConstraints = array_filter(
-                $partFilters[$fieldName]['constraints'],
+                $teamPartFilters[$fieldName]['constraints'],
                 function ($constraint) {
                     return isset($constraint['matchMode'])
                         && isset($constraint['value'])
@@ -144,14 +144,14 @@ class PartFilters implements Filter
             );
 
             if ($nonEmptyConstraints) {
-                $query->where(function (Builder $query) use ($nonEmptyConstraints, $partFilters, $field) {
+                $query->where(function (Builder $query) use ($nonEmptyConstraints, $teamPartFilters, $field) {
                     foreach ($nonEmptyConstraints as $constraint) {
                         $this->applyConstraint(
                             $query,
                             $field['db_column'],
                             $constraint['value'],
                             $constraint['matchMode'],
-                            $partFilters[$field['name']]['operator'],
+                            $teamPartFilters[$field['name']]['operator'],
                             $field['is_numeric']
                         );
                     }
