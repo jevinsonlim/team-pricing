@@ -18,7 +18,7 @@ const rows = ref(5);
 
 const initFilters = () => {
     filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        global: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         partType: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         manufacturer: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         modelNumber: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -211,6 +211,8 @@ const createFilterParams = (filters) => {
     if (filters.isAssociated.value !== null) {
         params['filter[is-associated]'] = filters.isAssociated.value;
     }
+
+    params['filter[part-filters]'] = encodeURIComponent(JSON.stringify(filters));
 
     return params;
 }

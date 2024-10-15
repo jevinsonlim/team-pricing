@@ -2,9 +2,7 @@
 
 namespace App\JsonApi\Filters;
 
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use LaravelJsonApi\Core\Support\Str;
 use LaravelJsonApi\Eloquent\Contracts\Filter;
 use LaravelJsonApi\Eloquent\Filters\Concerns\DeserializesValue;
