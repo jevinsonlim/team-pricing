@@ -33,10 +33,10 @@ Seed user accounts:
 - Validation results for system-wide part uploads
 - Validation results for team pricing uploads
 
-**Necessary improvements** (work in progress in [this branch](https://github.com/jevinsonlim/team-pricing/tree/server-side-pagination-and-filter-progress))
+**Improvements** 
 - Server-side pagination for datatables
-  - Basic features are functional but the app will be really slow for larger dataset
-- Batch team part association in a job
+  - Only implemented on Parts and Team Parts View
+- Batch team part association in a job (currently works on records within the datatable's page)
 
 **Plans for improvements**
 - Implement server-side pagination and filtering for all datatables
