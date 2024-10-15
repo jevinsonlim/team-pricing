@@ -35,7 +35,7 @@ Seed user accounts:
 
 **Improvements** 
 - Server-side pagination for datatables
-  - Only implemented on Parts and Team Parts View
+  - Only implemented on Parts and Team Parts datatable
 - Batch team part association in a job (currently works on records within the datatable's page)
 
 **Plans for improvements**
