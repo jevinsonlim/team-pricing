@@ -229,10 +229,6 @@ const onFilter = (event) => {
     lazyParams.value.filters = filters.value;
     loadLazyData(event);
 };
-const onSearchChange = debounce((event) => {
-    lazyParams.value.filters = filters.value;
-    loadLazyData(event);
-}, 300)
 </script>
 
 <template>
