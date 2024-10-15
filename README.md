@@ -33,10 +33,11 @@ Seed user accounts:
 - Validation results for system-wide part uploads
 - Validation results for team pricing uploads
 
-**Improvements** 
+**TODO: Improvements** 
 - Server-side pagination for datatables
   - Only implemented on Parts and Team Parts datatable
 - Batch team part association in a job (currently works on records within the datatable's page)
+- Notification for upload jobs
 
 **Plans for improvements**
 - Implement server-side pagination and filtering for all datatables
