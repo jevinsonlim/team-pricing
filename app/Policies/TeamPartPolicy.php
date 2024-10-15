@@ -54,6 +54,12 @@ class TeamPartPolicy
                 ->exists();
     }
 
+
+    public function delete(User $user, TeamPart $teamPart): bool
+    {
+        return $this->destroy($user, $teamPart);
+    }
+
     public function destroyBatch(User $user): bool
     {
         return $user->teamAdminships()->exists();

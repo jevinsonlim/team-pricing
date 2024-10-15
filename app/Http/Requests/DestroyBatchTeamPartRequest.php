@@ -31,6 +31,7 @@ class DestroyBatchTeamPartRequest extends FormRequest
 
                     if (!$teamPart) {
                         $fail("The {$attribute} is invalid.");
+                        return;
                     }
 
                     $sessionTeamId = session()->get('session_team')->id;
