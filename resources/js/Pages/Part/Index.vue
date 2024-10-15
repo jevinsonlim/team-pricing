@@ -229,6 +229,10 @@ const onFilter = (event) => {
     lazyParams.value.filters = filters.value;
     loadLazyData(event);
 };
+const onSearchChange = debounce((event) => {
+    lazyParams.value.filters = filters.value;
+    loadLazyData(event);
+}, 300)
 </script>
 
 <template>
@@ -273,7 +277,8 @@ const onFilter = (event) => {
                                             <InputIcon>
                                                 <i class="pi pi-search" />
                                             </InputIcon>
-                                            <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
+                                            <InputText v-model="filters['global'].value" placeholder="Keyword Search"
+                                                @change="onFilter($event)" />
                                         </IconField>
                                     </div>
                                 </div>
